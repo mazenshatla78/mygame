@@ -1,109 +1,185 @@
-# 🔔 THE BELL NEVER RINGS
+# THE BELL NEVER RINGS
 
-*A forgotten after-school nightmare.*
+A low-poly, retro-3D first-person horror game that runs entirely in the browser.
+One afternoon. One school. One janitor who does not want the day to end.
 
-**Riverside Elementary, 1997. 4:47 PM.** You are Milo, and you fell asleep in the library. When you woke up, the halls were wrong — longer, dimmer, humming. The clock in every room reads 4:47. The front doors are chained. And somewhere in the building, a janitor is mopping floors that are already clean, humming a song with no words.
+**Riverside Elementary, 1997 — 4:47 PM.** The bell never rang. The buses left
+without you. The front doors are chained, the halls are bright with late
+sunlight, and somewhere down the corridor a mop bucket is rolling toward the
+sound you just made.
 
-He doesn't shout. He doesn't run — not usually. He just *arrives*, mop in hand, smiling, wanting to talk. And talk. And talk.
-
-Find the **8 pages of your diary** scattered through the school to unlock the front doors, and escape before Mr. Mop finds you. Every page you collect makes him faster, and the school... stranger.
+Everything you see and hear is generated in code: the geometry, the textures,
+the music, the characters. There are **zero asset files** in this repository —
+no images, no models, no audio. The whole school is ~200 KB of JavaScript that
+draws itself a PS1 at a time.
 
 ---
 
-## ▶ How to Play
+## Play it
 
-### Run it
-
-No build step, no dependencies — it's a pure static site.
-
-**Option A — just open it:** double-click `index.html` in any modern browser.
-
-**Option B — local server (recommended):**
-
-```bash
-# pick one:
+```
+# any static server works
 python3 -m http.server 8000
-npx serve .
+# then open http://localhost:8000
 ```
 
-Then visit `http://localhost:8000`.
+Works on desktop (keyboard + mouse) and mobile (virtual stick + touch look).
+No build step, no dependencies, no network calls at runtime.
 
-Works on **desktop and mobile** browsers (Chrome, Firefox, Edge, Safari). Audio starts after your first click/tap (browser autoplay rules).
+---
+
+## The loop
+
+The school day is stuck on repeat: **eight periods** rotate on a schedule, and
+every period the halls rearrange their patrols. Your job is to collect the
+**8 pages of your diary** scattered through the classrooms — they are the only
+thing that unchains the front doors. Along the way you may find the **5 reel
+tapes** that explain what actually happened in 1969, and unlock the secret
+ending.
+
+You are not fast, and you are not armed. You are *small*, and you are *quiet*,
+and the school is full of places to be neither.
 
 ### Controls
 
-| Action | Keyboard | Mobile |
+| Action | Desktop | Mobile |
 |---|---|---|
-| Move | `WASD` / Arrow keys | Left thumb joystick |
-| Interact (pick up, read, open doors, hide) | `E` / `Enter` | ✋ Interact button |
-| Sprint (drains stamina, makes noise!) | hold `Shift` | 🏃 Run button |
-| Flashlight on/off (drains battery) | `F` | 🔦 Light button |
-| Drink soda (restores stamina) | `Q` | 🥤 Item button |
-| Throw hall pass (noise distraction) | `R` | — |
-| Pause | `Esc` / `P` | ⏸ in HUD |
-| Mute | `M` | — |
+| Move | `W A S D` / arrows | left virtual stick |
+| Look | mouse drag / pointer lock | drag anywhere on the right |
+| Run (stamina) | `Shift` | `RUN` button |
+| Interact / read / hide / open | `E` / `Enter` / `Space` | `USE` button |
+| Drink a soda (stamina back) | `Q` | `SODA` button |
+| Make a mess (noise decoy) | `F` | `MESS` button |
+| Throw hall pass (decoy for Patty) | `R` | `THROW` button |
+| Show hall pass (talk out of a slip) | `T` | `PASS` button |
+| Mute / unmute | `M` | — |
+| Pause | `Esc` / `P` | `❚❚` button in the HUD |
 
-### Survival tips
+### Mechanics beyond running and hiding
 
-- **Walking is quiet. Running is not.** Mr. Mop hears sprinting from far away — and investigates.
-- **Lockers are hiding spots.** But if he *saw* you go in... don't get comfortable.
-- **The flashlight helps you see, but helps him see you.** Toggle wisely.
-- **Hall passes can be thrown** to make noise somewhere else.
-- **Sodas** come from the vending machine (it works... three times) and pickups.
-- **His humming is your radar.** The louder the hum and your heartbeat, the closer he is.
-- Interact with everything: clocks, mirrors, blackboards, radios, trash cans. The school has a lot to say.
+- **Hiding.** Every corridor has a bank of lockers. Slip inside, pull the door,
+  and listen to the wheels of the cart go past. He *saw* you go in, though, if
+  he was looking — lockers are only as good as his line of sight.
+- **Noise & messes.** `[F]` kicks over whatever is kickable. Sound travels:
+  Mr. Mop will investigate the loudest thing he heard, which means a mess is a
+  decoy *and* a trap. Trash cans refill your mess charge.
+- **Mr. Mop** patrols, investigates, searches and chases. He is slow to notice
+  you in daylight and merciless once he has. He gives up eventually — and then
+  he remembers.
+- **Patty the hall monitor** does not chase you; she *writes you up*. Get
+  caught out of class without a hall pass and she telegraphs a tardy slip.
+  Show her a pass (`[T]`) and she waves you on. Enough slips and it is
+  detention — which, at Riverside, is not a room you leave.
+- **Hall passes are throwable.** Toss one (`[Q]`) down a corridor and Patty
+  will go collect it. She cannot resist litter.
+- **The secret nook.** A bookcase in the library does not quite close right.
+  Behind it: a room that is not on the floor plan, and a story that is not in
+  the diary.
+- **Hotspots.** Yearbook shelves, the lost & found, the janitor's closet, the
+  gym scoreboard, the principal's desk — one interaction each, and each one a
+  sentence of story told by the room instead of by a cutscene.
+- **The bell tower.** Eight pages open the tower door. The bell rope is at the
+  top. Ringing it ends the day — unchains the doors, stops Mr. Mop dead for
+  three and a half seconds, and moves every clock in the building to 4:48.
+  Then he comes, and he knows exactly where you are. **Run.**
 
----
+### Endings
 
-## 🕹 Game Systems
+- **YOU ESCAPED** — reach the front doors after the bell.
+- **THE BELL NEVER RINGS** — the secret ending: all 8 pages *and* all 5 tapes,
+  and a choice at the end that the game does not announce.
+- Finishing offers **New Game+**: same school, faster janitor, tighter slips,
+  and the tapes remember you.
 
-- **Objective loop:** collect 8 of 12 randomly-placed diary pages → doors unlock → escape. Page positions shuffle every run.
-- **Antagonist AI:** Mr. Mop patrols, hears noise, investigates, searches last-known positions, and chases on sight (with true line-of-sight checks). He pathfinds with BFS across the whole 48×32-tile school, opening doors as he goes. He gets faster with every page you take.
-- **Resources:** flashlight battery, sprint stamina, sodas, hall passes — all findable, all tradeoffs.
-- **Difficulty:** Easy / Normal / Hard (patrol & chase speed, battery drain, stamina burn) — pick it in Settings.
-- **Save system:** progress auto-saves on pickups and pause; **Continue** from the title picks up mid-run (pages, tapes, position, items, time).
-- **New Game+ ("Night 2"):** beat the game once and every new run is faster, meaner janitor territory. The title screen remembers.
+### Difficulty & saves
 
-## 🏆 Endings
-
-- **Normal ending — "YOU ESCAPED":** collect 8 pages, reach the front doors.
-- **Secret ending — "THE BELL NEVER RINGS":** also find all **5 hidden VHS tapes** before escaping. They're in the dark corners of the school — one is behind furniture that isn't what it seems.
-
-## 🤫 Secrets
-
-- A **bookcase in the library moves**. There's a nook behind it. Something is waiting in the nook.
-- The **vending machine** gives sodas — three times. The fourth time, read what it says.
-- The **clock** at 4:47 can be examined. Repeatedly. It doesn't like that.
-- The **mirror** in the hall shows you. Then it shows you *not alone*.
-- **Radios, blackboards, trash cans, plants, fire extinguishers** — all of them hold pieces of what happened at Riverside in 1997.
-
----
-
-## 🎨 Tech & Art Direction
-
-Zero external assets. Everything is generated:
-
-- **Graphics:** every sprite, tile, prop, character, and the jumpscare face are drawn procedurally with Canvas 2D primitives at runtime (`js/sprites.js`) — chunky shapes, muted 90s-school palette, deterministic grime. A VHS/CRT overlay (scanlines, vignette, tracking noise, glitch bursts) sits on top and can be disabled in Settings.
-- **Audio:** every sound is synthesized with the Web Audio API (`js/audio.js`) — footsteps, doors, lockers, pickups, stings, the janitor's hum (a living oscillator that follows him), heartbeat, ambient school drone, and a sparse procedural music bed. No audio files.
-- **Lighting:** runtime darkness buffer with radial flashlight cone, ambient glow, flicker events, and the janitor's eyes glowing through the dark.
-- **Architecture:** three modules — `audio.js` (sound engine), `sprites.js` (art), `game.js` (map generation, AI, state machine, rendering, UI). Fixed-timestep game loop with delta clamping, axis-separated AABB collision, tile-based map with BFS pathfinding.
-
-### Repository layout
-
-```
-mygame/
-├── index.html      # game shell: canvas, screens, HUD, touch controls
-├── css/style.css   # retro VHS/CRT UI styling
-├── js/audio.js     # procedural WebAudio engine
-├── js/sprites.js   # procedural canvas art
-├── js/game.js      # map, AI, player, rendering, save, UI wiring
-└── README.md
-```
-
-### Verified
-
-The game ships verified by a headless integration suite (mock DOM/canvas/WebAudio in Node) covering 116 assertions: menu flow, every button, movement & collision, pickups, reader, lockers, doors, noise/hearing, chase → caught → game over → retry, save/continue, pause, settings persistence, both endings, NG+, the secret nook, pathfinding, and a 3000-frame random-input fuzz. Map connectivity is flood-fill verified: every pickup, patrol point, and the exit are reachable; the secret nook is provably sealed until you find it.
+Three difficulties (Easy / Normal / Hard) scale speeds, stamina, slip tolerance
+and period length. Progress autosaves to `localStorage` (pages, tapes,
+inventory, position, time of day, opened secrets, tower state); the title
+screen offers **Continue**. Settings (volumes, CRT filter, screen shake,
+resolution, mouse sensitivity, dithering) persist separately.
 
 ---
 
-*The bell never rings at Riverside Elementary. It's been 4:47 for twenty-eight years.*
+## The look: low-poly retro 3D, in broad daylight
+
+This is a **software-rendered PS1-style engine** written from scratch
+(`js/render3d.js`): a fixed-point-feeling pipeline with vertex snapping,
+affine (warping) texture mapping, 4×4 Bayer dithering, per-vertex shading,
+distance fog and a 320×200 internal framebuffer blown up with nearest
+neighbour under a CRT scanline overlay. No WebGL, no libraries.
+
+- **Bright, not black.** The user asked for broad daylight, so there is *no
+  flashlight and no darkness to hide in*. Sunlight pools through the corridor
+  windows onto the lino; the horror is that everything is perfectly, flatly
+  visible — including him, three corridors away, already turning toward you.
+- **A real school.** 48×32 tiles of classrooms, a cafeteria with checkerboard
+  lino, a gym, a library of shelves you can get lost behind, locker banks in
+  every corridor, water fountains, vending machines, trophy cases, ceiling
+  light tiles, wall clocks, posters and murals — plus a 12×12 bell tower that
+  is a second level of its own.
+- **Procedural everything.** 62+ textures (lino, carpet, brick, lockers, book
+  spines, chalkboards, chain-link, glass, clock faces…) and 45 low-poly models
+  (desks, chairs, lockers, shelves, the mop cart, the bell, both characters)
+  are generated at boot by `js/textures.js` and `js/models.js`.
+- **Performance.** Per-quad facing culling + a tight view cone keep a frame at
+  ~2.5k triangles; a full game frame (simulation + render + post + HUD) costs
+  about **7 ms at 320×200** in headless Node, i.e. comfortably 60 fps, and
+  phones default to the chunkier 256×160 buffer for headroom.
+
+## The sound: generative, so it never loops annoyingly
+
+`js/audio.js` is a small WebAudio synth plus a **generative score**. Each mood
+(calm / safe / tense / hunt / finale / dark) is a set of rules — tempo, scale,
+density, instrumentation — and the music is *composed live* from them, one
+16th-note step at a time, with random-but-seeded phrasing. Two listens are
+never the same listen, so repetition cannot wear out its welcome. ~35 sound
+effects (locker clang, mop squeak, whistle, bell, slip stamp, heartbeat…) are
+synthesised the same way.
+
+---
+
+## Architecture
+
+| File | What it is |
+|---|---|
+| `index.html` | markup: canvas, CRT overlay, HUD, 8 screens, touch controls |
+| `css/style.css` | retro shell: scanlines, vignette, panels, touch stick |
+| `js/math3d.js` | vectors, matrices, camera (`M3`) |
+| `js/render3d.js` | the software rasteriser (`R3`): z-buffer, affine UV, dither, fog, sky |
+| `js/textures.js` | procedural texture factory (`Tex`, 62+ textures) |
+| `js/models.js` | procedural low-poly model library (`Models`, 45 meshes) |
+| `js/audio.js` | WebAudio synth + generative mood score (`Sound`) |
+| `js/game.js` | map, level baker, AI, mechanics, story, save system, UI, loop |
+
+The level is *baked*: `Level.build()` walks the tile map once and emits world
+quads (floors, ceilings, walls with carved window openings, doors) into
+buckets per tile; props (furniture, fixtures, characters, pickups) are drawn
+from the same buckets each frame, so culling is a handful of distance and
+dot-product tests.
+
+### Testing
+
+Because there is no browser in the CI box, the game is exercised headlessly:
+`js/*.js` are loaded whole into a Node `vm` context with stubbed
+DOM/canvas/WebAudio/localStorage, and a gameplay harness drives real input
+through the real update loop — pathfinding, collisions, line of sight, hiding,
+every pickup and hotspot, both AIs' full state machines, the bell, both
+endings, save/load round-trips, difficulty scaling, touch input and rendering
+(framebuffer diffs prove that characters, lockers, desks and the bell are
+actually *visible*, not merely submitted). Current status:
+
+- gameplay harness: **278 / 278 assertions pass**
+- renderer suite: **20 / 20**
+- audio suite: **27 / 27** (no repeated musical phrase in any mood)
+
+---
+
+## Credits
+
+Designed, written, drawn and synthesised by an AI agent on Arena.ai, in one
+repository, with no external assets. Inspired in *atmosphere only* by the
+school-horror genre; every character, name, map tile, texture and note here is
+original.
+
+*The bell never rang. You are still here. So is he.*
