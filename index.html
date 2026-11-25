@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>THE BELL NEVER RINGS — a lost school game</title>
+<meta name="description" content="A top-down indie horror game. Collect your diary pages. Don't let the janitor find you.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%23120f1a'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%23f2c14e'>🔔</text></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <canvas id="game" width="960" height="640"></canvas>
+
+  <!-- CRT / VHS overlay -->
+  <div id="crt" class="crt-on"></div>
+  <div id="vignette"></div>
+  <div id="glitch"></div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="hud-top">
+      <div id="hud-pages" title="Diary pages found">📄 <span id="pages-count">0</span>/8</div>
+      <div id="hud-tapes" title="Hidden tapes found">📼 <span id="tapes-count">0</span>/5</div>
+      <div id="hud-objective">Find your diary pages</div>
+      <div id="hud-time">00:00</div>
+      <button id="hud-pause" title="Pause (Esc)">⏸</button>
+    </div>
+    <div id="hud-bottom">
+      <div class="hud-meter"><label>🔦</label><div class="meter"><div id="battery-fill"></div></div></div>
+      <div class="hud-meter"><label>👟</label><div class="meter"><div id="stamina-fill"></div></div></div>
+      <div id="hud-items">
+        <span id="item-soda" title="Soda — restores stamina">🥤×<b id="soda-count">0</b></span>
+        <span id="item-pass" title="Hall pass — distracts Mr. Mop">🎫×<b id="pass-count">0</b></span>
+      </div>
+    </div>
+    <div id="hud-toast"></div>
+    <div id="hud-interact" class="hidden">[E] <span id="interact-label">Look</span></div>
+    <div id="hud-danger" class="hidden">⚠ HE'S CLOSE ⚠</div>
+  </div>
+
+  <!-- Diary / note reader -->
+  <div id="reader" class="overlay hidden">
+    <div class="paper">
+      <div class="paper-head" id="reader-head">DIARY PAGE</div>
+      <div class="paper-body" id="reader-body"></div>
+      <button class="btn small" id="reader-close">Put it away [E]</button>
+    </div>
+  </div>
+
+  <!-- Title screen -->
+  <div id="screen-title" class="screen">
+    <div class="title-wrap">
+      <div class="title-bell">🔔</div>
+      <h1 class="game-title">THE BELL<br>NEVER RINGS</h1>
+      <p class="tagline">a lost school game · est. 1997</p>
+      <p class="title-story">You stayed after school to finish your homework.<br>The school stayed with you.</p>
+      <div class="menu">
+        <button class="btn big" id="btn-new">▶ NEW GAME</button>
+        <button class="btn big" id="btn-continue">↩ CONTINUE</button>
+        <button class="btn" id="btn-how">HOW TO PLAY</button>
+        <button class="btn" id="btn-settings">SETTINGS</button>
+      </div>
+      <p class="title-foot">Headphones recommended 🎧 · WASD / Arrows to move · E to interact</p>
+      <p class="title-foot small" id="title-save-note"></p>
+    </div>
+  </div>
+
+  <!-- How to play -->
+  <div id="screen-how" class="screen hidden">
+    <div class="panel">
+      <h2>HOW TO PLAY</h2>
+      <div class="how-grid">
+        <div><b>🎯 Goal</b><p>Find all <b>8 diary pages</b> scattered around the school, then escape through the front doors. Find the <b>5 hidden tapes</b> for the secret ending.</p></div>
+        <div><b>🧹 Mr. Mop</b><p>The janitor patrols the halls. If he sees you — <b>run</b>, hide in a <b>locker</b>, or throw a <b>hall pass</b> to distract him. Running is loud. Your flashlight is bright. Both attract him.</p></div>
+        <div><b>⌨️ Controls</b><p><b>WASD / Arrows</b> move · <b>Shift</b> run · <b>E</b> interact / open / hide · <b>F</b> flashlight · <b>Q</b> use soda · <b>R</b> throw hall pass · <b>Esc</b> pause</p></div>
+        <div><b>📱 Mobile</b><p>Left thumb-stick to move. Buttons to interact, run, and use your flashlight.</p></div>
+        <div><b>🔦 Survival</b><p>Your flashlight battery drains. Find batteries. Soda restores stamina. Every page you take makes Mr. Mop <b>faster and angrier</b>.</p></div>
+        <div><b>👂 Listen</b><p>He hums when he's near. Your heartbeat gets louder when he's close. Trust your ears.</p></div>
+      </div>
+      <button class="btn" id="btn-how-back">← BACK</button>
+    </div>
+  </div>
+
+  <!-- Settings -->
+  <div id="screen-settings" class="screen hidden">
+    <div class="panel">
+      <h2>SETTINGS</h2>
+      <div class="setting-row"><label>Master volume</label><input type="range" id="set-master" min="0" max="100" value="80"></div>
+      <div class="setting-row"><label>Music volume</label><input type="range" id="set-music" min="0" max="100" value="60"></div>
+      <div class="setting-row"><label>SFX volume</label><input type="range" id="set-sfx" min="0" max="100" value="80"></div>
+      <div class="setting-row"><label>Difficulty</label>
+        <select id="set-difficulty">
+          <option value="easy">Easy — slow janitor, kind batteries</option>
+          <option value="normal" selected>Normal — the intended nightmare</option>
+          <option value="hard">Hard — he never sleeps</option>
+        </select>
+      </div>
+      <div class="setting-row"><label>CRT / VHS effect</label><input type="checkbox" id="set-crt" checked></div>
+      <div class="setting-row"><label>Screen shake</label><input type="checkbox" id="set-shake" checked></div>
+      <p class="setting-note">Settings save automatically. New difficulty applies on New Game.</p>
+      <button class="btn" id="btn-settings-back">← BACK</button>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div id="screen-pause" class="screen hidden">
+    <div class="panel">
+      <h2>PAUSED</h2>
+      <p class="pause-sub">The bell hasn't rung. It won't.</p>
+      <div class="menu">
+        <button class="btn big" id="btn-resume">▶ RESUME</button>
+        <button class="btn" id="btn-pause-settings">SETTINGS</button>
+        <button class="btn" id="btn-restart">↻ RESTART NIGHT</button>
+        <button class="btn danger" id="btn-quit">✕ QUIT TO TITLE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game over -->
+  <div id="screen-over" class="screen hidden">
+    <div class="panel over-panel">
+      <div class="over-face">🧹</div>
+      <h2 class="over-title">HE FOUND YOU</h2>
+      <p id="over-text">Mr. Mop just wanted to talk.</p>
+      <div class="menu">
+        <button class="btn big" id="btn-retry">↻ TRY AGAIN (from last page)</button>
+        <button class="btn" id="btn-over-title">TITLE SCREEN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Victory -->
+  <div id="screen-win" class="screen hidden">
+    <div class="panel win-panel">
+      <div class="win-icon">🌅</div>
+      <h2 class="win-title" id="win-title">YOU ESCAPED</h2>
+      <p id="win-text"></p>
+      <div id="win-stats" class="win-stats"></div>
+      <div class="menu">
+        <button class="btn big" id="btn-win-again">▶ PLAY AGAIN</button>
+        <button class="btn" id="btn-win-title">TITLE SCREEN</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intro card -->
+  <div id="screen-intro" class="screen hidden">
+    <div class="intro-wrap">
+      <p class="intro-line" id="intro-line">Riverside Elementary · 4:47 PM · October 31st, 1997</p>
+      <p class="intro-sub">You stayed late to finish your diary homework.<br>Now the school won't let you leave.</p>
+      <button class="btn big" id="btn-start">BEGIN THE NIGHT</button>
+    </div>
+  </div>
+
+  <!-- Mobile controls -->
+  <div id="touch-controls" class="hidden">
+    <div id="stick"><div id="stick-knob"></div></div>
+    <div id="touch-buttons">
+      <button id="tb-interact">E</button>
+      <button id="tb-run">RUN</button>
+      <button id="tb-light">🔦</button>
+      <button id="tb-item">🥤</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/audio.js"></script>
+<script src="js/sprites.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
