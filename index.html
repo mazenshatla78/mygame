@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b0d14">
+<meta name="description" content="THE BELL NEVER RINGS — a low-poly retro-3D first-person horror game set in an elementary school where the afternoon never ends. Original, procedural, no assets.">
+<title>THE BELL NEVER RINGS — low-poly 3D school horror</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="game" width="320" height="200" aria-label="Game view"></canvas>
+  <div id="crt" aria-hidden="true"></div>
+
+  <!-- ============================ HUD ============================ -->
+  <div id="hud" class="hidden">
+    <div id="hud-top">
+      <div id="hud-objective">📄 Diary pages 0/8 <span id="hud-clock-real">00:00</span></div>
+      <div id="hud-period">PERIOD 1 — READING</div>
+      <div id="hud-time">4:47 PM</div>
+    </div>
+
+    <div id="hud-left">
+      <div class="stat" title="Diary pages"><span class="ico">📄</span><b id="pages-count">0</b><i>/8</i></div>
+      <div class="stat" title="Hidden tapes"><span class="ico">📼</span><b id="tapes-count">0</b><i>/5</i></div>
+      <div class="stat" title="Mess you can spill — [F]"><span class="ico">🗑</span><b id="mess-count">6</b></div>
+      <div class="stat" title="Soda — [Q]"><span class="ico">🥤</span><b id="soda-count">1</b></div>
+      <div class="stat" title="Hall pass — [R] throw, [T] show"><span class="ico">🎫</span><b id="pass-count">1</b></div>
+    </div>
+
+    <div id="hud-right">
+      <div id="hud-stamina"><div id="stamina-fill"></div></div>
+      <div id="hud-stamina-label">STAMINA</div>
+      <div id="hud-slips">📝 <span id="slips-count">0/3</span></div>
+      <div id="hud-mopstate"></div>
+      <div id="hud-fps"></div>
+    </div>
+
+    <div id="hud-bottom">
+      <div id="hud-interact" class="hidden"><span id="interact-key">E</span> <span id="interact-label">Examine</span></div>
+      <div id="hud-patty" class="hidden"></div>
+      <div id="hud-danger" class="hidden">⚠ HE SEES YOU ⚠</div>
+    </div>
+
+    <div id="hud-toast"></div>
+    <button id="hud-pause" type="button" aria-label="Pause">❚❚</button>
+  </div>
+
+  <!-- ============================ TITLE ============================ -->
+  <div id="screen-title" class="screen">
+    <div class="panel">
+      <div id="title-badge" class="hidden">🏆 SECRET ENDING SEEN</div>
+      <h1 id="title-main">THE BELL<br><span>NEVER RINGS</span></h1>
+      <p id="title-sub">RIVERSIDE ELEMENTARY · 1997 · 4:47 PM<br>
+      A low-poly first-person horror game. Broad daylight. No flashlight.</p>
+      <div id="title-buttons">
+        <button id="btn-new" class="btn big" type="button">NEW DAY</button>
+        <button id="btn-continue" class="btn hidden" type="button">CONTINUE</button>
+        <button id="btn-ngplus" class="btn hidden" type="button">NIGHT 2 (NG+)</button>
+        <button id="btn-how" class="btn" type="button">HOW TO PLAY</button>
+        <button id="btn-settings" class="btn" type="button">SETTINGS</button>
+      </div>
+      <div id="title-meta"><span id="title-diff">Difficulty: Normal</span> · <span id="title-res">Standard 320x200</span></div>
+      <div id="title-hint">Click the game to capture the mouse · WASD to move · E to use</div>
+    </div>
+  </div>
+
+  <!-- ============================ INTRO ============================ -->
+  <div id="screen-intro" class="screen hidden">
+    <div class="panel wide">
+      <h2>4:47 PM</h2>
+      <pre id="intro-text"></pre>
+      <button id="btn-begin" class="btn big" type="button">STEP INTO THE HALL</button>
+    </div>
+  </div>
+
+  <!-- ============================ HOW TO PLAY ============================ -->
+  <div id="screen-how" class="screen hidden">
+    <div class="panel wide scroll">
+      <h2>HOW TO SURVIVE THE AFTERNOON</h2>
+      <pre id="how-text"></pre>
+      <button id="btn-how-back" class="btn" type="button">BACK</button>
+    </div>
+  </div>
+
+  <!-- ============================ SETTINGS ============================ -->
+  <div id="screen-settings" class="screen hidden">
+    <div class="panel scroll">
+      <h2>SETTINGS</h2>
+      <div class="row"><label for="range-master">Master volume</label>
+        <input id="range-master" type="range" min="0" max="100" value="80"><span id="lbl-master">80%</span></div>
+      <div class="row"><label for="range-music">Music</label>
+        <input id="range-music" type="range" min="0" max="100" value="55"><span id="lbl-music">55%</span></div>
+      <div class="row"><label for="range-sfx">Sound effects</label>
+        <input id="range-sfx" type="range" min="0" max="100" value="85"><span id="lbl-sfx">85%</span></div>
+      <div class="row"><label for="range-sens">Look sensitivity</label>
+        <input id="range-sens" type="range" min="20" max="250" value="100"><span id="lbl-sens">100%</span></div>
+      <div class="row"><label for="sel-difficulty">Difficulty</label>
+        <select id="sel-difficulty">
+          <option value="easy">Easy — Long Recess (he is slower, more mess, 4 slips)</option>
+          <option value="normal">Normal — Full Day</option>
+          <option value="hard">Hard — Permanent Record (fast, 5 mess, 2 slips)</option>
+        </select></div>
+      <div class="row"><label for="sel-res">Render resolution</label>
+        <select id="sel-res">
+          <option value="low">Retro 256x160 (fastest, chunkiest)</option>
+          <option value="normal">Standard 320x200</option>
+          <option value="high">Crisp 448x280 (slowest)</option>
+        </select></div>
+      <div class="row checks">
+        <label class="chk"><input id="chk-crt" type="checkbox"> CRT scanlines</label>
+        <label class="chk"><input id="chk-dither" type="checkbox"> Dithering</label>
+        <label class="chk"><input id="chk-shake" type="checkbox"> Camera shake</label>
+      </div>
+      <p class="note">Everything you see and hear is generated by code at runtime — there are no image, model or audio files in this game.</p>
+      <button id="btn-settings-back" class="btn" type="button">BACK</button>
+    </div>
+  </div>
+
+  <!-- ============================ PAUSE ============================ -->
+  <div id="screen-pause" class="screen hidden">
+    <div class="panel">
+      <h2>PAUSED</h2>
+      <p class="note">The clock still says 4:47. It always says 4:47.</p>
+      <button id="btn-resume" class="btn big" type="button">RESUME</button>
+      <button id="btn-pause-how" class="btn" type="button">HOW TO PLAY</button>
+      <button id="btn-pause-settings" class="btn" type="button">SETTINGS</button>
+      <button id="btn-quit" class="btn danger" type="button">SAVE &amp; QUIT TO TITLE</button>
+    </div>
+  </div>
+
+  <!-- ============================ GAME OVER ============================ -->
+  <div id="screen-over" class="screen hidden">
+    <div class="panel wide">
+      <h2 class="bad">CAUGHT</h2>
+      <pre id="over-text"></pre>
+      <button id="btn-retry" class="btn big" type="button">TRY THE DAY AGAIN</button>
+      <button id="btn-over-quit" class="btn" type="button">TITLE SCREEN</button>
+    </div>
+  </div>
+
+  <!-- ============================ DETENTION ============================ -->
+  <div id="screen-detention" class="screen hidden">
+    <div class="panel wide">
+      <h2 class="bad">DETENTION</h2>
+      <pre id="detention-text"></pre>
+      <button id="btn-det-retry" class="btn big" type="button">TRY THE DAY AGAIN</button>
+      <button id="btn-det-quit" class="btn" type="button">TITLE SCREEN</button>
+    </div>
+  </div>
+
+  <!-- ============================ WIN ============================ -->
+  <div id="screen-win" class="screen hidden">
+    <div class="panel wide">
+      <h2 class="good" id="win-title">YOU ESCAPED</h2>
+      <pre id="win-text"></pre>
+      <div id="win-stats"></div>
+      <button id="btn-win-ng" class="btn big" type="button">NIGHT 2 (NEW GAME+)</button>
+      <button id="btn-win-title" class="btn" type="button">TITLE SCREEN</button>
+    </div>
+  </div>
+
+  <!-- ============================ READER ============================ -->
+  <div id="reader" class="hidden">
+    <div id="reader-box">
+      <div id="reader-head">A PAGE</div>
+      <pre id="reader-body"></pre>
+      <button id="reader-close" class="btn" type="button">CLOSE  [E]</button>
+    </div>
+  </div>
+
+  <!-- ============================ TOUCH ============================ -->
+  <div id="touch-controls" class="hidden">
+    <div id="stick"><div id="stick-knob"></div></div>
+    <div id="touch-buttons">
+      <button id="tb-interact" class="tbtn wide" type="button">✋<span>USE</span></button>
+      <button id="tb-run" class="tbtn" type="button">🏃<span>RUN</span></button>
+      <button id="tb-mess" class="tbtn" type="button">🗑<span>MESS</span></button>
+      <button id="tb-item" class="tbtn" type="button">🥤<span>SODA</span></button>
+      <button id="tb-pass" class="tbtn" type="button">🎫<span>THROW</span></button>
+      <button id="tb-show" class="tbtn" type="button">🙋<span>PASS</span></button>
+    </div>
+  </div>
+</div>
+
+<script src="js/math3d.js"></script>
+<script src="js/render3d.js"></script>
+<script src="js/textures.js"></script>
+<script src="js/models.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
